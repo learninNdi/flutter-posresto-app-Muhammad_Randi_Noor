@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_posresto_app/core/core.dart';
+import 'package:flutter_posresto_app/presentation/home/bloc/checkout/checkout_bloc.dart';
 import 'package:flutter_posresto_app/presentation/home/models/product_quantity.dart';
 
 import '../../../core/components/spaces.dart';
-import '../../../core/constants/colors.dart';
 
 class OrderMenu extends StatelessWidget {
   final ProductQuantity data;
@@ -20,11 +21,13 @@ class OrderMenu extends StatelessWidget {
             Flexible(
               child: ListTile(
                 contentPadding: EdgeInsets.zero,
+                // minLeadingWidth: null,
                 leading: ClipRRect(
                   borderRadius: const BorderRadius.all(Radius.circular(50.0)),
                   child: Image.network(
                     // data.product.image,
-                    'https://cdn.idntimes.com/content-images/community/2019/11/jajanan-kekinian-4-7379fc0b73799ae0f1d3f7e02e732083.jpg',
+                    // 'https://cdn.idntimes.com/content-images/community/2019/11/jajanan-kekinian-4-7379fc0b73799ae0f1d3f7e02e732083.jpg',
+                    'https://awsimages.detik.net.id/community/media/visual/2021/04/22/5-makanan-enak-dari-indonesia-dan-malaysia-yang-terkenal-enak-5.jpeg?w=600&q=90',
                     width: 40.0,
                     height: 40.0,
                     fit: BoxFit.cover,
@@ -68,6 +71,10 @@ class OrderMenu extends StatelessWidget {
                     //   // data.quantity--;
                     //   // setState(() {});
                     // }
+
+                    context
+                        .read<CheckoutBloc>()
+                        .add(CheckoutEvent.removeItem(data.product));
                   },
                   child: Container(
                     width: 30,
@@ -94,6 +101,9 @@ class OrderMenu extends StatelessWidget {
                     //     onDeleteTap();
                     // data.quantity++;
                     // setState(() {});
+                    context
+                        .read<CheckoutBloc>()
+                        .add(CheckoutEvent.addItem(data.product));
                   },
                   child: Container(
                     width: 30,

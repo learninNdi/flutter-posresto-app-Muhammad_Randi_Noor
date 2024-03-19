@@ -22,7 +22,7 @@ class HomeTitle extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Resto POS',
+              'Focus Resto',
               style: TextStyle(
                 color: AppColors.primary,
                 fontSize: 22,

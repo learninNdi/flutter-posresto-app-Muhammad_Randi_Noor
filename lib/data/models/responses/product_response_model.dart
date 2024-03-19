@@ -83,12 +83,17 @@ class Product {
             : Category.fromMap(json["category"]),
       );
 
+  factory Product.fromOrderMap(Map<String, dynamic> json) => Product(
+        id: json["id_product"],
+        price: json["price"].toString(),
+      );
+
   factory Product.fromLocalMap(Map<String, dynamic> json) => Product(
-        id: json["productId"],
-        categoryId: json["categoryId"],
+        id: json["id_product"],
+        categoryId: json["category_id"],
         category: Category(
-          id: json["categoryId"],
-          name: json["categoryName"],
+          id: json["category_id"],
+          name: json["category_name"],
         ),
         name: json["name"],
         description: json["description"],
@@ -96,26 +101,26 @@ class Product {
         price: json["price"],
         stock: json["stock"],
         status: json["status"],
-        isFavorite: json["isFavorite"],
-        createdAt: json["createdAt"] == null
+        isFavorite: json["is_favorite"],
+        createdAt: json["created_at"] == null
             ? null
-            : DateTime.parse(json["createdAt"]),
-        updatedAt: json["updatedAt"] == null
+            : DateTime.parse(json["created_at"]),
+        updatedAt: json["updated_at"] == null
             ? null
-            : DateTime.parse(json["updatedAt"]),
+            : DateTime.parse(json["updated_at"]),
       );
 
   Map<String, dynamic> toLocalMap() => {
-        "productId": id,
-        "categoryId": categoryId,
-        "categoryName": category?.name,
+        "id_product": id,
+        "category_id": categoryId,
+        "category_name": category?.name,
         "name": name,
         "description": description,
         "image": image,
         "price": price,
         "stock": stock,
         "status": status,
-        "isFavorite": isFavorite,
+        "is_favorite": isFavorite,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
       };
