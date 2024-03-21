@@ -145,7 +145,7 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                               orElse: () => const Center(
                                 child: Text('No Items'),
                               ),
-                              loaded: (products) {
+                              loaded: (products, discout, tax, serviceCharge) {
                                 if (products.isEmpty) {
                                   return const Center(
                                     child: Text('No Items'),
@@ -201,36 +201,152 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                         const Divider(),
                         const SpaceHeight(8.0),
 
-                        const Row(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            const Text(
                               'Pajak',
                               style: TextStyle(color: AppColors.grey),
                             ),
-                            Text(
-                              '11 %',
-                              style: TextStyle(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w600,
-                              ),
+                            BlocBuilder<CheckoutBloc, CheckoutState>(
+                              builder: (context, state) {
+                                final tax = state.maybeWhen(
+                                  orElse: () => 0,
+                                  loaded:
+                                      (items, discount, tax, serviceCharge) =>
+                                          tax,
+                                );
+
+                                final price = state.maybeWhen(
+                                  orElse: () => 0,
+                                  loaded: (products, discout, tax,
+                                          serviceCharge) =>
+                                      products.fold(
+                                          0,
+                                          (previousValue, element) =>
+                                              previousValue +
+                                              (element.product.price!
+                                                      .toIntegerFromText *
+                                                  element.quantity)),
+                                );
+
+                                final discount = state.maybeWhen(
+                                  orElse: () => 0,
+                                  loaded:
+                                      (items, discount, tax, serviceCharge) =>
+                                          discount?.value!
+                                              .replaceAll(".00", "")
+                                              .toIntegerFromText ??
+                                          0,
+                                );
+
+                                final subTotal =
+                                    price - (discount / 100 * price);
+                                final finalTax = subTotal * 0.11;
+
+                                return Text(
+                                  '$tax % (${finalTax.toInt().currencyFormatRp})',
+                                  style: const TextStyle(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),
                         const SpaceHeight(16.0),
-                        const Row(
+
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            const Text(
+                              'Layanan',
+                              style: TextStyle(color: AppColors.grey),
+                            ),
+                            BlocBuilder<CheckoutBloc, CheckoutState>(
+                              builder: (context, state) {
+                                final price = state.maybeWhen(
+                                  orElse: () => 0,
+                                  loaded: (products, discout, tax,
+                                          serviceCharge) =>
+                                      products.fold(
+                                          0,
+                                          (previousValue, element) =>
+                                              previousValue +
+                                              (element.product.price!
+                                                      .toIntegerFromText *
+                                                  element.quantity)),
+                                );
+
+                                final discount = state.maybeWhen(
+                                  orElse: () => 0,
+                                  loaded:
+                                      (items, discount, tax, serviceCharge) =>
+                                          discount?.value!
+                                              .replaceAll(".00", "")
+                                              .toIntegerFromText ??
+                                          0,
+                                );
+
+                                final subTotal =
+                                    price - (discount / 100 * price);
+                                final serviceCharge = subTotal * 0.05;
+
+                                return Text(
+                                  serviceCharge.toInt().currencyFormatRp,
+                                  style: const TextStyle(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        const SpaceHeight(16.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
                               'Diskon',
                               style: TextStyle(color: AppColors.grey),
                             ),
-                            Text(
-                              'Rp. 0',
-                              style: TextStyle(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w600,
-                              ),
+                            BlocBuilder<CheckoutBloc, CheckoutState>(
+                              builder: (context, state) {
+                                final discount = state.maybeWhen(
+                                  orElse: () => 0,
+                                  loaded:
+                                      (items, discount, tax, serviceCharge) =>
+                                          discount?.value!
+                                              .replaceAll(".00", "")
+                                              .toIntegerFromText ??
+                                          0,
+                                );
+
+                                final subTotal = state.maybeWhen(
+                                  orElse: () => 0,
+                                  loaded:
+                                      (items, discount, tax, serviceCharge) =>
+                                          items.fold(
+                                              0,
+                                              (previousValue, element) =>
+                                                  previousValue +
+                                                  (element.product.price!
+                                                          .toIntegerFromText *
+                                                      element.quantity)),
+                                );
+
+                                final finalDiscount = discount / 100 * subTotal;
+
+                                return Text(
+                                  finalDiscount.toInt().currencyFormatRp,
+                                  style: const TextStyle(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),
@@ -246,13 +362,15 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                               builder: (context, state) {
                                 final price = state.maybeWhen(
                                   orElse: () => 0,
-                                  loaded: (products) => products.fold(
-                                      0,
-                                      (previousValue, element) =>
-                                          previousValue +
-                                          (element.product.price!
-                                                  .toIntegerFromText *
-                                              element.quantity)),
+                                  loaded: (products, discout, tax,
+                                          serviceCharge) =>
+                                      products.fold(
+                                          0,
+                                          (previousValue, element) =>
+                                              previousValue +
+                                              (element.product.price!
+                                                      .toIntegerFromText *
+                                                  element.quantity)),
                                 );
                                 return Text(
                                   price.currencyFormatRp,
@@ -280,17 +398,34 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                               builder: (context, state) {
                                 final price = state.maybeWhen(
                                   orElse: () => 0,
-                                  loaded: (products) => products.fold(
-                                      0,
-                                      (previousValue, element) =>
-                                          previousValue +
-                                          (element.product.price!
-                                                  .toString()
-                                                  .toIntegerFromText *
-                                              element.quantity)),
+                                  loaded: (products, discout, tax,
+                                          serviceCharge) =>
+                                      products.fold(
+                                          0,
+                                          (previousValue, element) =>
+                                              previousValue +
+                                              (element.product.price!
+                                                      .toIntegerFromText *
+                                                  element.quantity)),
                                 );
-                                final tax = price * 0.11;
-                                final total = price + tax;
+
+                                final discount = state.maybeWhen(
+                                  orElse: () => 0,
+                                  loaded:
+                                      (items, discount, tax, serviceCharge) =>
+                                          discount?.value!
+                                              .replaceAll(".00", "")
+                                              .toIntegerFromText ??
+                                          0,
+                                );
+
+                                final subTotal =
+                                    (price - (discount / 100 * price));
+                                final tax = (subTotal * 0.11);
+                                final serviceCharge = (subTotal * 0.05);
+                                final total =
+                                    subTotal + tax.ceil() + serviceCharge;
+
                                 totalPriceController.text =
                                     total.ceil().toString();
                                 return Text(
@@ -439,10 +574,40 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                                 const SpaceWidth(8.0),
                                 BlocBuilder<CheckoutBloc, CheckoutState>(
                                   builder: (context, state) {
+                                    final discount = state.maybeWhen(
+                                      orElse: () => 0,
+                                      loaded: (items, discount, tax,
+                                              serviceCharge) =>
+                                          discount?.value!
+                                              .replaceAll(".00", "")
+                                              .toIntegerFromText ??
+                                          0,
+                                    );
+
+                                    final price = state.maybeWhen(
+                                      orElse: () => 0,
+                                      loaded: (products, discout, tax,
+                                              serviceCharge) =>
+                                          products.fold(
+                                              0,
+                                              (previousValue, element) =>
+                                                  previousValue +
+                                                  (element.product.price!
+                                                          .toIntegerFromText *
+                                                      element.quantity)),
+                                    );
+
+                                    final subTotal =
+                                        price - (discount / 100 * price);
+                                    final finalTax = subTotal * 0.11;
+                                    final serviceCharge = subTotal * 0.05;
+
                                     List<ProductQuantity> items =
                                         state.maybeWhen(
                                             orElse: () => [],
-                                            loaded: (products) => products);
+                                            loaded: (products, discout, tax,
+                                                    serviceCharge) =>
+                                                products);
 
                                     return Flexible(
                                       child: Button.filled(
@@ -450,9 +615,9 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                                           context.read<OrderBloc>().add(
                                               OrderEvent.order(
                                                   items,
-                                                  0,
-                                                  0,
-                                                  0,
+                                                  discount,
+                                                  finalTax.ceil(),
+                                                  serviceCharge.ceil(),
                                                   totalPriceController
                                                       .text.toIntegerFromText));
 

@@ -16,14 +16,15 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     on<_Order>((event, emit) async {
       emit(const _Loading());
 
-      final subTotal = event.items.fold<int>(
+      final price = event.items.fold(
           0,
           (previousValue, element) =>
               previousValue +
               (element.product.price!.toIntegerFromText * element.quantity));
 
-      final total = subTotal + event.tax + event.serviceCharge - event.discount;
-      final totalItem = event.items.fold<int>(
+      final subTotal = (price - (event.discount / 100 * price));
+      final total = subTotal + event.tax + event.serviceCharge;
+      final totalItem = event.items.fold(
           0, (previousValue, element) => previousValue + element.quantity);
 
       final userData = await AuthLocalDatasource().getAuthData();

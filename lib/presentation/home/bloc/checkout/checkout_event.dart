@@ -9,4 +9,14 @@ class CheckoutEvent with _$CheckoutEvent {
 
   // remove item
   const factory CheckoutEvent.removeItem(Product product) = _RemoveItem;
+
+  const factory CheckoutEvent.addDiscount(Discount discount) = _AddDiscount;
+  const factory CheckoutEvent.removeDiscount() = _RemoveDiscount;
+
+  const factory CheckoutEvent.addTax(int tax) = _AddTax;
+  // const factory CheckoutEvent.removeTax() = _RemoveTax;
+
+  const factory CheckoutEvent.addServiceCharge(int serviceCharge) =
+      _AddServiceCharge;
+  // const factory CheckoutEvent.removeServiceCharge() = _RemoveServiceCharge;
 }
