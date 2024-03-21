@@ -94,8 +94,8 @@ class _DiscountDialogState extends State<DiscountDialog> {
                     discounts
                         .map((discount) => ListTile(
                               title: Text('Nama Diskon: ${discount.name}'),
-                              subtitle:
-                                  Text('Potongan harga (${discount.value}%)'),
+                              subtitle: Text(
+                                  'Potongan harga (${discount.value!.replaceAll(".00", "")}%)'),
                               contentPadding: EdgeInsets.zero,
                               textColor: AppColors.primary,
                               trailing: Checkbox(

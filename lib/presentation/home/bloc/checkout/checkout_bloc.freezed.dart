@@ -582,10 +582,10 @@ class __$$AddDiscountImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? discount = freezed,
+    Object? discount = null,
   }) {
     return _then(_$AddDiscountImpl(
-      freezed == discount
+      null == discount
           ? _value.discount
           : discount // ignore: cast_nullable_to_non_nullable
               as Discount,
@@ -611,12 +611,12 @@ class _$AddDiscountImpl implements _AddDiscount {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AddDiscountImpl &&
-            const DeepCollectionEquality().equals(other.discount, discount));
+            (identical(other.discount, discount) ||
+                other.discount == discount));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(discount));
+  int get hashCode => Object.hash(runtimeType, discount);
 
   @JsonKey(ignore: true)
   @override
@@ -1588,7 +1588,8 @@ class _$LoadedImpl implements _Loaded {
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
             const DeepCollectionEquality().equals(other._items, _items) &&
-            const DeepCollectionEquality().equals(other.discount, discount) &&
+            (identical(other.discount, discount) ||
+                other.discount == discount) &&
             (identical(other.tax, tax) || other.tax == tax) &&
             (identical(other.serviceCharge, serviceCharge) ||
                 other.serviceCharge == serviceCharge));
@@ -1598,7 +1599,7 @@ class _$LoadedImpl implements _Loaded {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(_items),
-      const DeepCollectionEquality().hash(discount),
+      discount,
       tax,
       serviceCharge);
 
