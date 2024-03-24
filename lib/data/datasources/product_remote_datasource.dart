@@ -13,7 +13,7 @@ class ProductRemoteDatasource {
       url,
       headers: {
         'Authorization': 'Bearer ${authData.token}',
-        'Accept': 'application/json',
+        // 'Accept': 'application/json',
       },
     );
 

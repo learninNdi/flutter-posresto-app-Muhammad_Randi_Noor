@@ -32,7 +32,7 @@ class AuthRemoteDatasource {
       url,
       headers: {
         'Authorization': 'Bearer ${authData.token}',
-        'Accept': 'application/json',
+        // 'Accept': 'application/json',
       },
     );
 
@@ -40,6 +40,6 @@ class AuthRemoteDatasource {
       return const Right(true);
     }
 
-    return const Left('Failed to login');
+    return const Left('Failed to logout');
   }
 }
