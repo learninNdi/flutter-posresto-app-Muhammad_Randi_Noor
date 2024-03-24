@@ -38,6 +38,7 @@ class ProductLocalDatasource {
       CREATE TABLE $tableOrder (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         payment_amount INTEGER,
+        price INTEGER,
         sub_total INTEGER,
         tax INTEGER,
         discount INTEGER,
@@ -112,6 +113,18 @@ class ProductLocalDatasource {
 
     return List.generate(
         maps.length, (index) => ProductQuantity.fromLocalMap(maps[index]));
+  }
+
+  // get all orders
+  Future<List<OrderModel>> getAllOrders(
+      DateTime startTime, DateTime endTime) async {
+    final db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(tableOrder,
+        where: 'transaction_time BETWEEN ? AND ?',
+        whereArgs: [startTime.toIso8601String(), endTime.toIso8601String()]);
+
+    return List.generate(
+        maps.length, (index) => OrderModel.fromMap(maps[index]));
   }
 
   // update order is_sync

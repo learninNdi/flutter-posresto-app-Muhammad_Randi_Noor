@@ -22,16 +22,17 @@ class OrderMenu extends StatelessWidget {
               child: ListTile(
                 contentPadding: EdgeInsets.zero,
                 // minLeadingWidth: null,
-                leading: ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(50.0)),
-                  child: Image.network(
-                    // data.product.image,
-                    // 'https://cdn.idntimes.com/content-images/community/2019/11/jajanan-kekinian-4-7379fc0b73799ae0f1d3f7e02e732083.jpg',
-                    'https://awsimages.detik.net.id/community/media/visual/2021/04/22/5-makanan-enak-dari-indonesia-dan-malaysia-yang-terkenal-enak-5.jpeg?w=600&q=90',
-                    width: 40.0,
-                    height: 40.0,
-                    fit: BoxFit.cover,
-                  ),
+                leading: const ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                  // child: Image.network(
+                  //   // data.product.image,
+                  //   // 'https://cdn.idntimes.com/content-images/community/2019/11/jajanan-kekinian-4-7379fc0b73799ae0f1d3f7e02e732083.jpg',
+                  //   'https://awsimages.detik.net.id/community/media/visual/2021/04/22/5-makanan-enak-dari-indonesia-dan-malaysia-yang-terkenal-enak-5.jpeg?w=600&q=90',
+                  //   width: 40.0,
+                  //   height: 40.0,
+                  //   fit: BoxFit.cover,
+                  // ),
+                  child: Icon(Icons.food_bank_outlined),
                 ),
                 title: FittedBox(
                   child: Text(data.product.name!,

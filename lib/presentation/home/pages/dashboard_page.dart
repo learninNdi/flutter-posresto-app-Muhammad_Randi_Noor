@@ -9,6 +9,7 @@ import '../../../core/constants/colors.dart';
 import '../../../data/datasources/auth_local_datasource.dart';
 import '../../auth/bloc/logout/logout_bloc.dart';
 import '../../auth/login_page.dart';
+import '../../report/pages/report_page.dart';
 import '../widgets/nav_item.dart';
 import 'home_page.dart';
 
@@ -30,7 +31,8 @@ class _DashboardPageState extends State<DashboardPage> {
     // const SettingsPage(),
 
     // const Center(child: Text('This is page 1')),
-    const Center(child: Text('This is page 2')),
+    // const Center(child: Text('This is page 2')),
+    const ReportPage(),
     const Center(child: Text('This is page 3')),
     // const Center(child: Text('This is page 4')),
     // const SyncDataPage(),

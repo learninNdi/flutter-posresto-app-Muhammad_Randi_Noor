@@ -18,6 +18,7 @@ class OrderModel {
   final String transactionTime;
   final int isSync;
   final List<ProductQuantity> orderItems;
+  final int price;
 
   OrderModel({
     this.id,
@@ -34,6 +35,7 @@ class OrderModel {
     required this.transactionTime,
     required this.isSync,
     required this.orderItems,
+    required this.price,
   });
 
   Map<String, dynamic> toServerMap() {
@@ -50,6 +52,7 @@ class OrderModel {
       'nama_kasir': namaKasir,
       'transaction_time': transactionTime,
       'order_items': orderItems.map((e) => e.toLocalMap(id!)).toList(),
+      'price': price,
     };
   }
 
@@ -68,6 +71,7 @@ class OrderModel {
       'nama_kasir': namaKasir,
       'transaction_time': transactionTime,
       'is_sync': isSync,
+      'price': price,
     };
   }
 
@@ -87,6 +91,7 @@ class OrderModel {
       transactionTime: map['transaction_time'] as String,
       isSync: map['is_sync'] as int,
       orderItems: [],
+      price: map['price'] as int,
     );
   }
 
@@ -110,6 +115,7 @@ class OrderModel {
     String? transactionTime,
     int? isSync,
     List<ProductQuantity>? orderItems,
+    int? price,
   }) {
     return OrderModel(
       id: id ?? this.id,
@@ -126,6 +132,7 @@ class OrderModel {
       transactionTime: transactionTime ?? this.transactionTime,
       isSync: isSync ?? this.isSync,
       orderItems: orderItems ?? this.orderItems,
+      price: price ?? this.price,
     );
   }
 }

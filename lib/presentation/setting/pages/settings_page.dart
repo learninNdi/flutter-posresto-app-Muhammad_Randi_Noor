@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_posresto_app/presentation/setting/pages/discount_page.dart';
+import 'package:flutter_posresto_app/presentation/setting/pages/printer_page.dart';
 import 'package:flutter_posresto_app/presentation/setting/pages/sync_data_page.dart';
 import 'package:flutter_posresto_app/presentation/setting/pages/tax_page.dart';
 
@@ -81,6 +82,18 @@ class _SettingsPageState extends State<SettingsPage> {
                         : Colors.transparent,
                     onTap: () => indexValue(2),
                   ),
+                  ListTile(
+                    contentPadding: const EdgeInsets.all(12.0),
+                    leading: Assets.icons.kelolaPajak.svg(),
+                    title: const Text('Sync Data'),
+                    subtitle:
+                        const Text('Sinkronisasi data dari dan ke server'),
+                    textColor: AppColors.primary,
+                    tileColor: currentIndex == 3
+                        ? AppColors.blueLight
+                        : Colors.transparent,
+                    onTap: () => indexValue(3),
+                  ),
                 ],
               ),
             ),
@@ -97,9 +110,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   index: currentIndex,
                   children: const [
                     DiscountPage(),
-                    // Text('printer'),
-                    SyncDataPage(),
+                    PrinterPage(),
                     TaxPage(),
+                    SyncDataPage(),
                     // ManageDiscount(),
                     // ManagePrinterPage(),
                     // ManageTax(),

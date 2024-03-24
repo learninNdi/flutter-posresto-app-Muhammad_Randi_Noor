@@ -1,25 +1,50 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
+
+import 'package:flutter_posresto_app/data/dataoutputs/print_dataoutputs.dart';
+import 'package:flutter_posresto_app/presentation/home/models/product_quantity.dart';
 
 import '../../../../core/core.dart';
 import '../../../core/components/buttons.dart';
 import '../../../core/components/spaces.dart';
 import '../bloc/checkout/checkout_bloc.dart';
 import '../bloc/order/order_bloc.dart';
-import '../models/order_item.dart';
 
 class SuccessPaymentDialog extends StatefulWidget {
-  const SuccessPaymentDialog({super.key});
+  const SuccessPaymentDialog({
+    super.key,
+    required this.data,
+    required this.totalQty,
+    required this.totalPrice,
+    required this.totalTax,
+    required this.totalDiscount,
+    required this.subTotal,
+    required this.normalPrice,
+    required this.paymentAmount,
+    required this.serviceCharge,
+  });
+  final List<ProductQuantity> data;
+  final int totalQty;
+  final int totalPrice;
+  final int totalTax;
+  final int totalDiscount;
+  final int subTotal;
+  final int normalPrice;
+  final int paymentAmount;
+  final int serviceCharge;
 
   @override
   State<SuccessPaymentDialog> createState() => _SuccessPaymentDialogState();
 }
 
 class _SuccessPaymentDialogState extends State<SuccessPaymentDialog> {
-  List<OrderItem> data = [];
-  int totalQty = 0;
-  int totalPrice = 0;
+  // List<ProductQuantity> data = [];
+  // int totalQty = 0;
+  // int totalPrice = 0;
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -64,13 +89,13 @@ class _SuccessPaymentDialogState extends State<SuccessPaymentDialog> {
             const SpaceHeight(5.0),
             BlocBuilder<OrderBloc, OrderState>(
               builder: (context, state) {
-                final total = state.maybeWhen(
-                  orElse: () => 0,
-                  loaded: (model) => model.total,
-                );
+                // final total = state.maybeWhen(
+                //   orElse: () => 0,
+                //   loaded: (model) => model.total,
+                // );
 
                 return Text(
-                  total.ceil().currencyFormatRp,
+                  widget.totalPrice.currencyFormatRp,
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
                   ),
@@ -90,7 +115,7 @@ class _SuccessPaymentDialogState extends State<SuccessPaymentDialog> {
                 );
 
                 return Text(
-                  paymentAmount.ceil().currencyFormatRp,
+                  paymentAmount.currencyFormatRp,
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
                   ),
@@ -104,20 +129,20 @@ class _SuccessPaymentDialogState extends State<SuccessPaymentDialog> {
             const SpaceHeight(5.0),
             BlocBuilder<OrderBloc, OrderState>(
               builder: (context, state) {
-                final paymentAmount = state.maybeWhen(
-                  orElse: () => 0,
-                  loaded: (model) => model.paymentAmount,
-                );
+                // final paymentAmount = state.maybeWhen(
+                //   orElse: () => 0,
+                //   loaded: (model) => model.paymentAmount,
+                // );
 
-                final total = state.maybeWhen(
-                  orElse: () => 0,
-                  loaded: (model) => model.total,
-                );
+                // final total = state.maybeWhen(
+                //   orElse: () => 0,
+                //   loaded: (model) => model.total,
+                // );
 
-                final changeAmount = paymentAmount - total;
+                final changeAmount = widget.paymentAmount - widget.totalPrice;
 
                 return Text(
-                  changeAmount.ceil().currencyFormatRp,
+                  changeAmount.currencyFormatRp,
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
                   ),
@@ -153,15 +178,22 @@ class _SuccessPaymentDialogState extends State<SuccessPaymentDialog> {
                 Flexible(
                   child: Button.filled(
                     onPressed: () async {
-                      // final printValue = await CwbPrint.instance.printOrder(
-                      //   data,
-                      //   totalQty,
-                      //   totalPrice,
-                      //   'Tunai',
-                      //   totalPrice,
-                      //   'Bahri',
-                      // );
-                      // await PrintBluetoothThermal.writeBytes(printValue);
+                      final printValue =
+                          await PrintDataoutputs.instance.printOrder(
+                        widget.data,
+                        widget.totalQty,
+                        widget.totalPrice,
+                        'Tunai',
+                        widget.totalPrice,
+                        'Coba',
+                        widget.totalDiscount,
+                        widget.totalTax,
+                        widget.subTotal,
+                        widget.normalPrice,
+                        widget.paymentAmount,
+                        widget.serviceCharge,
+                      );
+                      await PrintBluetoothThermal.writeBytes(printValue);
                     },
                     label: 'Print',
                   ),

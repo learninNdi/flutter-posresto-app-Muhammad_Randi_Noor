@@ -7,8 +7,6 @@ import '../../../../core/core.dart';
 import '../../../core/components/buttons.dart';
 import '../../../core/components/spaces.dart';
 import '../bloc/checkout/checkout_bloc.dart';
-import '../models/product_category.dart';
-import '../models/product_model.dart';
 import '../widgets/column_button.dart';
 import '../widgets/order_menu.dart';
 import '../widgets/success_payment_dialog.dart';
@@ -22,20 +20,7 @@ class ConfirmPaymentPage extends StatefulWidget {
 
 class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
   final totalPriceController = TextEditingController();
-  final products = [
-    ProductModel(
-        image: Assets.images.product1.path,
-        name: 'Vanila Late Vanila itu',
-        category: ProductCategory.drink,
-        price: 200000,
-        stock: 10),
-    ProductModel(
-        image: Assets.images.product2.path,
-        name: 'V60',
-        category: ProductCategory.drink,
-        price: 1200000,
-        stock: 10),
-  ];
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -205,6 +190,138 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
+                              'Diskon',
+                              style: TextStyle(color: AppColors.grey),
+                            ),
+                            BlocBuilder<CheckoutBloc, CheckoutState>(
+                              builder: (context, state) {
+                                final discount = state.maybeWhen(
+                                  orElse: () => 0,
+                                  loaded:
+                                      (items, discount, tax, serviceCharge) =>
+                                          discount?.value!
+                                              .replaceAll(".00", "")
+                                              .toIntegerFromText ??
+                                          0,
+                                );
+
+                                final subTotal = state.maybeWhen(
+                                  orElse: () => 0,
+                                  loaded:
+                                      (items, discount, tax, serviceCharge) =>
+                                          items.fold(
+                                              0,
+                                              (previousValue, element) =>
+                                                  previousValue +
+                                                  (element.product.price!
+                                                          .toIntegerFromText *
+                                                      element.quantity)),
+                                );
+
+                                final finalDiscount = discount / 100 * subTotal;
+
+                                return Text(
+                                  finalDiscount.toInt().currencyFormatRp,
+                                  style: const TextStyle(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+
+                        const SpaceHeight(16.0),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Price',
+                              style: TextStyle(color: AppColors.grey),
+                            ),
+                            BlocBuilder<CheckoutBloc, CheckoutState>(
+                              builder: (context, state) {
+                                final price = state.maybeWhen(
+                                  orElse: () => 0,
+                                  loaded: (products, discout, tax,
+                                          serviceCharge) =>
+                                      products.fold(
+                                          0,
+                                          (previousValue, element) =>
+                                              previousValue +
+                                              (element.product.price!
+                                                      .toIntegerFromText *
+                                                  element.quantity)),
+                                );
+                                return Text(
+                                  price.currencyFormatRp,
+                                  style: const TextStyle(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+
+                        const SpaceHeight(16.0),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Sub total',
+                              style: TextStyle(color: AppColors.grey),
+                            ),
+                            BlocBuilder<CheckoutBloc, CheckoutState>(
+                              builder: (context, state) {
+                                final discount = state.maybeWhen(
+                                  orElse: () => 0,
+                                  loaded:
+                                      (items, discount, tax, serviceCharge) =>
+                                          discount?.value!
+                                              .replaceAll(".00", "")
+                                              .toIntegerFromText ??
+                                          0,
+                                );
+
+                                int subTotal = state.maybeWhen(
+                                  orElse: () => 0,
+                                  loaded:
+                                      (items, discount, tax, serviceCharge) =>
+                                          items.fold(
+                                              0,
+                                              (previousValue, element) =>
+                                                  previousValue +
+                                                  (element.product.price!
+                                                          .toIntegerFromText *
+                                                      element.quantity)),
+                                );
+
+                                final finalDiscount = discount / 100 * subTotal;
+                                subTotal -= finalDiscount.toInt();
+
+                                return Text(
+                                  subTotal.currencyFormatRp,
+                                  style: const TextStyle(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+
+                        const SpaceHeight(16.0),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
                               'Pajak',
                               style: TextStyle(color: AppColors.grey),
                             ),
@@ -245,7 +362,7 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                                 final finalTax = subTotal * 0.11;
 
                                 return Text(
-                                  '$tax % (${finalTax.toInt().currencyFormatRp})',
+                                  '$tax% (${finalTax.toInt().currencyFormatRp})',
                                   style: const TextStyle(
                                     color: AppColors.primary,
                                     fontWeight: FontWeight.w600,
@@ -304,85 +421,7 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                             ),
                           ],
                         ),
-                        const SpaceHeight(16.0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Diskon',
-                              style: TextStyle(color: AppColors.grey),
-                            ),
-                            BlocBuilder<CheckoutBloc, CheckoutState>(
-                              builder: (context, state) {
-                                final discount = state.maybeWhen(
-                                  orElse: () => 0,
-                                  loaded:
-                                      (items, discount, tax, serviceCharge) =>
-                                          discount?.value!
-                                              .replaceAll(".00", "")
-                                              .toIntegerFromText ??
-                                          0,
-                                );
 
-                                final subTotal = state.maybeWhen(
-                                  orElse: () => 0,
-                                  loaded:
-                                      (items, discount, tax, serviceCharge) =>
-                                          items.fold(
-                                              0,
-                                              (previousValue, element) =>
-                                                  previousValue +
-                                                  (element.product.price!
-                                                          .toIntegerFromText *
-                                                      element.quantity)),
-                                );
-
-                                final finalDiscount = discount / 100 * subTotal;
-
-                                return Text(
-                                  finalDiscount.toInt().currencyFormatRp,
-                                  style: const TextStyle(
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                        const SpaceHeight(16.0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Sub total',
-                              style: TextStyle(color: AppColors.grey),
-                            ),
-                            BlocBuilder<CheckoutBloc, CheckoutState>(
-                              builder: (context, state) {
-                                final price = state.maybeWhen(
-                                  orElse: () => 0,
-                                  loaded: (products, discout, tax,
-                                          serviceCharge) =>
-                                      products.fold(
-                                          0,
-                                          (previousValue, element) =>
-                                              previousValue +
-                                              (element.product.price!
-                                                      .toIntegerFromText *
-                                                  element.quantity)),
-                                );
-                                return Text(
-                                  price.currencyFormatRp,
-                                  style: const TextStyle(
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
                         const SpaceHeight(16.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -420,16 +459,14 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                                 );
 
                                 final subTotal =
-                                    (price - (discount / 100 * price));
-                                final tax = (subTotal * 0.11);
-                                final serviceCharge = (subTotal * 0.05);
-                                final total =
-                                    subTotal + tax.ceil() + serviceCharge;
+                                    (price - (discount / 100 * price).toInt());
+                                final tax = (subTotal * 0.11).toInt();
+                                final serviceCharge = (subTotal * 0.05).toInt();
+                                final total = subTotal + tax + serviceCharge;
 
-                                totalPriceController.text =
-                                    total.ceil().toString();
+                                totalPriceController.text = total.toString();
                                 return Text(
-                                  total.ceil().currencyFormatRp,
+                                  total.currencyFormatRp,
                                   style: const TextStyle(
                                     color: AppColors.primary,
                                     fontWeight: FontWeight.w600,
@@ -531,27 +568,27 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                               ),
                             ),
                             const SpaceHeight(45.0),
-                            Row(
-                              children: [
-                                Button.filled(
-                                  width: 150.0,
-                                  onPressed: () {},
-                                  label: 'UANG PAS',
-                                ),
-                                const SpaceWidth(20.0),
-                                Button.filled(
-                                  width: 150.0,
-                                  onPressed: () {},
-                                  label: 'Rp 250.000',
-                                ),
-                                const SpaceWidth(20.0),
-                                Button.filled(
-                                  width: 150.0,
-                                  onPressed: () {},
-                                  label: 'Rp 300.000',
-                                ),
-                              ],
-                            ),
+                            // Row(
+                            //   children: [
+                            //     Button.filled(
+                            //       width: 150.0,
+                            //       onPressed: () {},
+                            //       label: 'UANG PAS',
+                            //     ),
+                            //     const SpaceWidth(20.0),
+                            //     Button.filled(
+                            //       width: 150.0,
+                            //       onPressed: () {},
+                            //       label: 'Rp 250.000',
+                            //     ),
+                            //     const SpaceWidth(20.0),
+                            //     Button.filled(
+                            //       width: 150.0,
+                            //       onPressed: () {},
+                            //       label: 'Rp 300.000',
+                            //     ),
+                            //   ],
+                            // ),
                             const SpaceHeight(100.0),
                           ],
                         ),
@@ -574,16 +611,6 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                                 const SpaceWidth(8.0),
                                 BlocBuilder<CheckoutBloc, CheckoutState>(
                                   builder: (context, state) {
-                                    final discount = state.maybeWhen(
-                                      orElse: () => 0,
-                                      loaded: (items, discount, tax,
-                                              serviceCharge) =>
-                                          discount?.value!
-                                              .replaceAll(".00", "")
-                                              .toIntegerFromText ??
-                                          0,
-                                    );
-
                                     final price = state.maybeWhen(
                                       orElse: () => 0,
                                       loaded: (products, discout, tax,
@@ -597,10 +624,25 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                                                       element.quantity)),
                                     );
 
-                                    final subTotal =
-                                        price - (discount / 100 * price);
-                                    final finalTax = subTotal * 0.11;
-                                    final serviceCharge = subTotal * 0.05;
+                                    final discount = state.maybeWhen(
+                                      orElse: () => 0,
+                                      loaded: (items, discount, tax,
+                                              serviceCharge) =>
+                                          discount?.value!
+                                              .replaceAll(".00", "")
+                                              .toIntegerFromText ??
+                                          0,
+                                    );
+
+                                    final subTotal = price -
+                                        ((discount / 100 * price).toInt());
+                                    final finalTax = (subTotal * 0.11).toInt();
+                                    final serviceCharge =
+                                        (subTotal * 0.05).toInt();
+                                    final finalDiscount =
+                                        (discount / 100 * price).toInt();
+                                    final totalPrice =
+                                        subTotal + finalTax + serviceCharge;
 
                                     List<ProductQuantity> items =
                                         state.maybeWhen(
@@ -609,15 +651,20 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                                                     serviceCharge) =>
                                                 products);
 
+                                    final totalQty = items.fold(
+                                        0,
+                                        ((previousValue, element) =>
+                                            previousValue + element.quantity));
+
                                     return Flexible(
                                       child: Button.filled(
                                         onPressed: () async {
                                           context.read<OrderBloc>().add(
                                               OrderEvent.order(
                                                   items,
-                                                  discount,
-                                                  finalTax.ceil(),
-                                                  serviceCharge.ceil(),
+                                                  finalDiscount,
+                                                  finalTax,
+                                                  serviceCharge,
                                                   totalPriceController
                                                       .text.toIntegerFromText));
 
@@ -625,7 +672,18 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                                             context: context,
                                             barrierDismissible: false,
                                             builder: (context) =>
-                                                const SuccessPaymentDialog(),
+                                                SuccessPaymentDialog(
+                                              data: items,
+                                              totalQty: totalQty,
+                                              totalPrice: totalPrice,
+                                              totalTax: finalTax,
+                                              totalDiscount: finalDiscount,
+                                              subTotal: subTotal,
+                                              normalPrice: price,
+                                              paymentAmount: int.parse(
+                                                  totalPriceController.text),
+                                              serviceCharge: serviceCharge,
+                                            ),
                                           );
                                         },
                                         label: 'Bayar',

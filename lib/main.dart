@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_posresto_app/data/datasources/auth_local_datasource.dart';
 import 'package:flutter_posresto_app/data/datasources/auth_remote_datasource.dart';
@@ -12,16 +14,23 @@ import 'package:flutter_posresto_app/presentation/home/bloc/checkout/checkout_bl
 import 'package:flutter_posresto_app/presentation/home/bloc/local_product/local_product_bloc.dart';
 import 'package:flutter_posresto_app/presentation/home/bloc/order/order_bloc.dart';
 import 'package:flutter_posresto_app/presentation/home/pages/dashboard_page.dart';
+import 'package:flutter_posresto_app/presentation/report/bloc/transaction_report/transaction_report_bloc.dart';
 import 'package:flutter_posresto_app/presentation/setting/bloc/discount/discount_bloc.dart';
 import 'package:flutter_posresto_app/presentation/setting/bloc/sync_order/sync_order_bloc.dart';
 import 'package:flutter_posresto_app/presentation/setting/bloc/sync_product/sync_product_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'core/constants/colors.dart';
 import 'presentation/setting/bloc/add_discount/add_discount_bloc.dart';
 
-void main() {
+Future main() async {
+  if (Platform.isWindows || Platform.isLinux) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
+
   runApp(const MyApp());
 }
 
@@ -60,6 +69,10 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => AddDiscountBloc(DiscountRemoteDatasource()),
+        ),
+        BlocProvider(
+          create: (context) =>
+              TransactionReportBloc(ProductLocalDatasource.instance),
         ),
       ],
       child: MaterialApp(
